@@ -1,0 +1,49 @@
+import { useState } from "react";
+import Item from "./Item";
+
+export default function PackingList({
+  items,
+  onDeleteItems,
+  onToggleItems,
+  onMarkAllAsUnpacked,
+  onRemoveAllItems,
+}) {
+  const [sortBy, setSortBy] = useState("input");
+
+  const sortedItems = [...items].sort((a, b) => {
+    if (sortBy === "input") return 0;
+    if (sortBy === "description")
+      return a.description.localeCompare(b.description);
+    if (sortBy === "packed") return Number(a.packed) - Number(b.packed);
+    return 0;
+  });
+
+  return (
+    <div className="list">
+      <ul>
+        {sortedItems.map((item) => (
+          <Item
+            item={item}
+            onDeleteItems={onDeleteItems}
+            onToggleItems={onToggleItems}
+            key={item.id}
+          />
+        ))}
+      </ul>
+
+      <div className="actions">
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="input">Sort by input order</option>
+          <option value="description">Sort by description</option>
+          <option value="packed">Sort by packed status</option>
+        </select>
+        <button className="primary" onClick={() => onMarkAllAsUnpacked()}>
+          Mark All As Unpacked
+        </button>
+        <button className="secondary" onClick={() => onRemoveAllItems()}>
+          Remove All Items
+        </button>
+      </div>
+    </div>
+  );
+}
